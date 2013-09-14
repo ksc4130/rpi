@@ -12,7 +12,7 @@
     </style>
 </head>
 <body>
-      <article style="display: none;" class="container">
+      <article id="content" style="display: none;" class="container">
           <div class="row">
               <div class="col-md-12">
                   <div class="btn-group">
@@ -43,6 +43,11 @@
             socket.emit('change', false);
         };
     };
+
+    socket.on('init', function (data) {
+        vm.isOn(data);
+        $('#content').show();
+    });
 
     socket.on('change', function (data) {
         vm.isOn(data);
