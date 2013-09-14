@@ -23,4 +23,22 @@ function Toggle() {
     });
 }
 
-setInterval(Toggle, 500);
+//setInterval(Toggle, 500);
+
+
+var http = require('http')
+    , fs = require('fs');
+
+server = http.createServer(function server(req, res) {
+    res.setHeader('Content-Type', 'text/html');
+    fs.createReadStream(__dirname + '/index.html').pipe(res);
+}).listen(4130);
+
+var io = require('socket.io').listen(server);
+
+io.sockets.on('connection', function (socket) {
+    socket.emit('news', { hello: 'world' });
+    socket.on('hello', function (data) {
+        console.log(data);
+    });
+});
