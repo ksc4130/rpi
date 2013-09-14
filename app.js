@@ -39,7 +39,7 @@ function handler (req, res) {
 }
 
 io.sockets.on('connection', function (socket) {
-    socket.emit('change', (gpio17.value === 1));
+    socket.emit('init', (gpio17.value === 1));
     socket.on('change', function (data) {
         gpio17.set(data ? 1 : 0, function() {
             console.log(gpio17.value);
