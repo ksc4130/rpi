@@ -38,7 +38,7 @@
 
         args = args || {};
 
-        self.id = pin;
+        self.id = args.id;
         self.name = args.name || 'unknown';
         self.state = ko.observable(args.state || 0);
 
