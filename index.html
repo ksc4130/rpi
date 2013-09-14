@@ -31,9 +31,11 @@
 
     var vm = {
         isOn: ko.observable(false),
-        isOff: ko.computed(function () {
-           return !this.isOn();
-        }),
+        isOff: function () {
+            return ko.computed(function () {
+                return !this.isOn();
+            }, this);
+        },
         turnOff: function () {
             socket.emit('change', 1);
         },
