@@ -37,15 +37,12 @@ function handler (req, res) {
     res.writeHead(200);
     fs.createReadStream(__dirname + '/index.html').pipe(res);
 }
-//server = http.createServer(function server(req, res) {
-//    res.writeHead(200);
-//    res.setHeader('Content-Type', 'text/html');
-//    fs.createReadStream(__dirname + '/index.html').pipe(res);
-//}).listen(4130);
 
 io.sockets.on('connection', function (socket) {
-    socket.emit('news', { hello: 'world' });
-    socket.on('hello', function (data) {
-        console.log(data);
+    socket.emit('change', (gpio17.value === 1));
+    socket.on('change', function (data) {
+        gpio17.set(data, function() {
+            console.log(gpio17.value);    // should log 0
+        });
     });
 });

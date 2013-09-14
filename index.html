@@ -3,17 +3,51 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="http://getbootstrap.com/dist/css/bootstrap.css" rel="stylesheet" media="screen">
     <title></title>
+    <style>
+        body {
+            padding-top: 40px;
+        }
+    </style>
 </head>
 <body>
-
+      <article class="container">
+          <div class="row">
+              <div class="col-md-12">
+                  <div class="btn-group">
+                      <button data-bind="click: turnOn, enable: isOff, css: {'btn-primary': isOn, 'btn-default': isOff}" type="button" class="btn">On</button>
+                      <button data-bind="click: turnOff, enable: isOn, css: {'btn-primary': isOff, 'btn-default': isOn}" type="button" class="btn">Off</button>
+                  </div>
+              </div>
+          </div>
+      </article>
 </body>
+<script src="http://codeorigin.jquery.com/jquery-2.0.3.min.js"></script>
+<script src="http://knockoutjs.com/downloads/knockout-3.0.0beta.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
     var socket = io.connect('http://192.168.1.20:4130');
-    socket.on('news', function (data) {
-        console.log(data);
-        socket.emit('my other event', { my: 'data' });
+
+    var vm = {
+        isOn: ko.observable(false),
+        isOff: ko.computed(function () {
+           return !this.isOn();
+        }),
+        turnOff: function () {
+            socket.emit('change', 1);
+        },
+        turnOn: function () {
+            socket.emit('change', 0);
+        }
+    };
+
+    socket.on('change', function (data) {
+        vm.isOn(data);
     });
+
+
+
+
 </script>
 </html>
