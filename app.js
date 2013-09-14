@@ -60,7 +60,7 @@ io.sockets.on('connection', function (socket) {
         var device = devices[data.id];
 
         if(device)
-            device.set(data ? 1 : 0, function() {
+            device.set(data.state, function() {
                 console.log(device.value);
                 io.sockets.emit('change', {id: data.id, state: device.value});
             });
