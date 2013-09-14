@@ -25,27 +25,52 @@ function Toggle() {
 
 //setInterval(Toggle, 500);
 
+var app = require('http').createServer(handler)
+    , io = require('socket.io').listen(app)
+    , fs = require('fs')
 
-var server = require('http').createServer(handler)
-    , io = require('socket.io').listen(server)
-    , fs = require('fs');
-
-server.listen(4130);
+app.listen(80);
 
 function handler (req, res) {
-    res.setHeader('Content-Type', 'text/html');
-    res.writeHead(200);
-    fs.createReadStream(__dirname + '/index.html').pipe(res);
+    fs.readFile(__dirname + '/index.html',
+        function (err, data) {
+            if (err) {
+                res.writeHead(500);
+                return res.end('Error loading index.html');
+            }
+
+            res.writeHead(200);
+            res.end(data);
+        });
 }
-//server = http.createServer(function server(req, res) {
-//    res.writeHead(200);
-//    res.setHeader('Content-Type', 'text/html');
-//    fs.createReadStream(__dirname + '/index.html').pipe(res);
-//}).listen(4130);
 
 io.sockets.on('connection', function (socket) {
     socket.emit('news', { hello: 'world' });
-    socket.on('hello', function (data) {
+    socket.on('my other event', function (data) {
         console.log(data);
     });
 });
+
+//var server = require('http').createServer(handler)
+//    , io = require('socket.io').listen(server)
+//    , fs = require('fs');
+//
+//server.listen(4130);
+//
+//function handler (req, res) {
+//    res.setHeader('Content-Type', 'text/html');
+//    res.writeHead(200);
+//    fs.createReadStream(__dirname + '/index.html').pipe(res);
+//}
+////server = http.createServer(function server(req, res) {
+////    res.writeHead(200);
+////    res.setHeader('Content-Type', 'text/html');
+////    fs.createReadStream(__dirname + '/index.html').pipe(res);
+////}).listen(4130);
+//
+//io.sockets.on('connection', function (socket) {
+//    socket.emit('news', { hello: 'world' });
+//    socket.on('hello', function (data) {
+//        console.log(data);
+//    });
+//});
