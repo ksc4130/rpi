@@ -74,20 +74,15 @@
     var vm = new function () {
         var self = this;
         self.barn = ko.observableArray([]);
-        self.isOn = ko.observable();
-        self.isOff = ko.computed(function () {
-            return !self.isOn();
-        });
-        self.turnOn = function () {
-            socket.emit('change', true);
-        };
-        self.turnOff = function () {
-            socket.emit('change', false);
-        };
     };
 
     socket.on('init', function (data) {
-        vm.barn(data);
+        var mapped = [];
+        for(var i = 0, il = data.length; i < il; i++)
+        {
+            mapped.push(device(data[i]));
+        }
+        vm.barn(mapped);
         $('#content').show();
     });
 
