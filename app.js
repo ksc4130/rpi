@@ -1,30 +1,44 @@
 var gpio = require("gpio");
 
-// Calling export with a pin number will export that header and return a gpio header instance
-var gpio17 = gpio.export(17, {
-    // When you export a pin, the default direction is out. This allows you to set
-    // the pin value to either LOW or HIGH (3.3V) from your program.
+var deviceIdCnt = 0;
+var devices = {};
+
+var device = function (pin, args) {
+    if(!pin || typeof pin !== 'number')
+        throw {
+            name: 'invalid device pin/id',
+            message: 'invalid device pin/id'
+        };
+
+    var self = new function() {};
+
+    args = args || {};
+
+    self.id = pin;
+    self.name = args.name || 'unknown';
+    self.state = args.state || 0;
+    self.direction = args.direction || 'out';
+
+    devices[pin.toString()] = gpio.export(pin, {
+        direction: args.direction || 'out',
+        interval: 200,
+        ready: function() {
+        }
+    });
+};
+
+var barn = [
+  device(17, {
+      name: 'Flood Lights'
+  })
+];
+
+var floodLights = gpio.export(17, {
     direction: 'out',
-
-    // set the time interval (ms) between each read when watching for value changes
-    // note: this is default to 100, setting value too low will cause high CPU usage
     interval: 200,
-
-    // Due to the asynchronous nature of exporting a header, you may not be able to
-    // read or write to the header right away. Place your logic in this ready
-    // function to guarantee everything will get fired properly
     ready: function() {
     }
 });
-
-function Toggle() {
-    gpio17.set((1 - gpio17.value), function() {
-        console.log(gpio17.value);    // should log 0
-    });
-}
-
-//setInterval(Toggle, 500);
-
 
 var server = require('http').createServer(handler)
     , io = require('socket.io').listen(server)
@@ -39,11 +53,16 @@ function handler (req, res) {
 }
 
 io.sockets.on('connection', function (socket) {
-    socket.emit('init', (gpio17.value === 1));
+    sockets.emit('init', barn);
     socket.on('change', function (data) {
-        gpio17.set(data ? 1 : 0, function() {
-            console.log(gpio17.value);
-            socket.emit('change', (gpio17.value === 1));
-        });
+        var device = devices[data.id];
+
+        if(device)
+            device.set(data ? 1 : 0, function() {
+                console.log(device.value);
+                socket.emit('change', {id: data.id, state: device.value});
+            });
+        else
+            console.log("can't find device for id ", data.id);
     });
 });

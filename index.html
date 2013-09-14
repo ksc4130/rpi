@@ -14,12 +14,15 @@
 <body>
       <article id="content" style="display: none;" class="container">
           <div class="row">
+              <!-- ko foreach: barn -->
               <div class="col-md-12">
+                  <h4 data-bind="text: name"></h4>
                   <div class="btn-group">
                       <button data-bind="click: turnOn, enable: isOff, css: {'btn-primary': isOn, 'btn-default': isOff}" type="button" class="btn">On</button>
                       <button data-bind="click: turnOff, enable: isOn, css: {'btn-primary': isOff, 'btn-default': isOn}" type="button" class="btn">Off</button>
                   </div>
               </div>
+              <!-- /ko -->
           </div>
       </article>
 </body>
@@ -29,9 +32,46 @@
 <script>
     var socket = io.connect('http://192.168.1.20:4130');
 
+    var device = function (pin, args) {
+        if(!pin || typeof pin !== 'number')
+            throw {
+                name: 'invalid device pin/id',
+                message: 'invalid device pin/id'
+            };
+
+        var self = new function() {};
+
+        args = args || {};
+
+        self.id = pin;
+        self.name = args.name || 'unknown';
+        self.state = ko.observable(args.state || 0);
+
+        self.isOn = ko.computed(function () {
+            return self.state() === 1;
+        });
+
+        self.isOff = ko.computed(function () {
+            return self.state() === 0;
+        });
+
+        self.turnOn = function () {
+            socket.emit('change', {
+                id: self.id,
+                state: 1
+            });
+        };
+        self.turnOff = function () {
+            socket.emit('change', {
+                id: self.id,
+                state: 0
+            });
+        };
+    };
+
     var vm = new function () {
         var self = this;
-
+        self.barn = ko.observableArray([]);
         self.isOn = ko.observable();
         self.isOff = ko.computed(function () {
             return !self.isOn();
@@ -45,12 +85,17 @@
     };
 
     socket.on('init', function (data) {
-        vm.isOn(data);
+        vm.barn(data);
         $('#content').show();
     });
 
     socket.on('change', function (data) {
-        vm.isOn(data);
+        var arr = vm.barn(),
+            device = ko.arrayFirst(arr, function (item) {
+                    return item.id === data.id;
+                });
+        if(device)
+            device.state(device.state);
     });
 
     $(function () {
