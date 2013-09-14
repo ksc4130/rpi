@@ -35,7 +35,7 @@ server.listen(4130);
 function handler (req, res) {
     res.setHeader('Content-Type', 'test/html');
     res.writeHead(200);
-    fs.createReadStream(__driname + '/index.html').pipe(res);
+    fs.createReadStream(__dirname + '/index.html').pipe(res);
 }
 //server = http.createServer(function server(req, res) {
 //    res.writeHead(200);
