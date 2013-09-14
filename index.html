@@ -34,7 +34,7 @@
 <script src="http://knockoutjs.com/downloads/knockout-3.0.0beta.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    var socket = io.connect('http://192.168.1.20:4130');
+    var socket = io.connect(window.location.origin  + ':4130');
 
     var device = function (args) {
 
