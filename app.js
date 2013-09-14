@@ -33,8 +33,8 @@ var server = require('http').createServer(handler)
 server.listen(4130);
 
 function handler (req, res) {
-    res.writeHead(200);
     res.setHeader('Content-Type', 'test/html');
+    res.writeHead(200);
     fs.createReadStream(__driname + '/index.html').pipe(res);
 }
 //server = http.createServer(function server(req, res) {
