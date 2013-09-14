@@ -37,10 +37,10 @@
             }, this);
         },
         turnOff: function () {
-            socket.emit('change', 1);
+            socket.emit('change', true);
         },
         turnOn: function () {
-            socket.emit('change', 0);
+            socket.emit('change', false);
         }
     };
 
