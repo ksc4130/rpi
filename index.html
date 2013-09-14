@@ -18,8 +18,8 @@
               <div class="col-md-12">
                   <h4 data-bind="text: name"></h4>
                   <div class="btn-group">
-                      <button data-bind="click: turnOn, enable: isOff, css: {'btn-primary': isOn, 'btn-default': isOff}" type="button" class="btn">On</button>
-                      <button data-bind="click: turnOff, enable: isOn, css: {'btn-primary': isOff, 'btn-default': isOn}" type="button" class="btn">Off</button>
+                      <button data-bind="click: toggle, css: {'btn-primary': isOn, 'btn-default': isOff}" type="button" class="btn">On</button>
+                      <button data-bind="click: toggle, css: {'btn-primary': isOff, 'btn-default': isOn}" type="button" class="btn">Off</button>
                   </div>
               </div>
               <!-- /ko -->
@@ -49,6 +49,13 @@
         self.isOff = ko.computed(function () {
             return self.state() === 0;
         });
+
+        self.toggle = function () {
+            socket.emit('change', {
+                id: self.id,
+                state: (1 - self.state())
+            });
+        };
 
         self.turnOn = function () {
             socket.emit('change', {

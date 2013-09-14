@@ -30,9 +30,12 @@ var device = function (pin, args) {
 };
 
 var barn = [
-  device(17, {
-      name: 'Flood Lights'
-  })
+    device(27, {
+      name: 'Lights'
+    }),
+    device(17, {
+        name: 'Flood Lights'
+    })
 ];
 
 var floodLights = gpio.export(17, {
