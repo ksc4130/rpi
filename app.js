@@ -1,20 +1,26 @@
-var Gpio = require('onoff').Gpio, // Constructor function for Gpio objects.
-    led = new Gpio(17, 'out');    // Export GPIO #17 as an output.
+var gpio = require("gpio");
 
-// Toggle the state of the LED on GPIO #17 every 200ms 'count' times.
-// Here asynchronous methods are used. Synchronous methods are also available.
-(function blink(count) {
-    if (count <= 0) return led.unexport();
+// Calling export with a pin number will export that header and return a gpio header instance
+var gpio17 = gpio.export(17, {
+    // When you export a pin, the default direction is out. This allows you to set
+    // the pin value to either LOW or HIGH (3.3V) from your program.
+    direction: 'out',
 
-    led.read(function(err, value) {  // Asynchronous read.
-        if (err) throw err;
+    // set the time interval (ms) between each read when watching for value changes
+    // note: this is default to 100, setting value too low will cause high CPU usage
+    interval: 200,
 
-        led.write(value === 0 ? 1 : 0, function(err) { // Asynchronous write.
-            if (err) throw err;
-        });
+    // Due to the asynchronous nature of exporting a header, you may not be able to
+    // read or write to the header right away. Place your logic in this ready
+    // function to guarantee everything will get fired properly
+    ready: function() {
+    }
+});
+
+function Toggle() {
+    gpio17.set((1 - gpio17.value), function() {
+        console.log(gpio17.value);    // should log 0
     });
+}
 
-    setTimeout(function() {
-        blink(count - 1);
-    }, 200);
-})(20);
+setInterval(Toggle, 500);
