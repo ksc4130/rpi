@@ -26,15 +26,22 @@ function Toggle() {
 //setInterval(Toggle, 500);
 
 
-var http = require('http')
+var server = require('http').createServer(handler)
+    , io = require('socket.io').listen(server)
     , fs = require('fs');
 
-server = http.createServer(function server(req, res) {
-    res.setHeader('Content-Type', 'text/html');
-    fs.createReadStream(__dirname + '/index.html').pipe(res);
-}).listen(4130);
+server.listen(4130);
 
-var io = require('socket.io').listen(server);
+function handler (req, res) {
+    res.writeHead(200);
+    res.setHeader('Content-Type', 'test/html');
+    fs.createReadStream(__driname + '/index.html').pipe(res);
+}
+//server = http.createServer(function server(req, res) {
+//    res.writeHead(200);
+//    res.setHeader('Content-Type', 'text/html');
+//    fs.createReadStream(__dirname + '/index.html').pipe(res);
+//}).listen(4130);
 
 io.sockets.on('connection', function (socket) {
     socket.emit('news', { hello: 'world' });
