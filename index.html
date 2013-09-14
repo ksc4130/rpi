@@ -72,19 +72,17 @@
     };
 
     socket.on('init', function (data) {
-        console.log(data);
-        var mapped = [];
-        for(var i = 0, il = data.length; i < il; i++)
-        {
-            mapped.push(device(data[i]));
-        }
+        var mapped = ko.utils.arrayMap(data, function (item) {
+            return device(item);
+        });
+
         vm.barn(mapped);
         $('#content').show();
     });
 
     socket.on('change', function (data) {
         var arr = vm.barn(),
-            device = ko.arrayFirst(arr, function (item) {
+            device = ko.utils.arrayFirst(arr, function (item) {
                     return item.id === data.id;
                 });
         if(device)
