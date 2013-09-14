@@ -53,14 +53,14 @@ function handler (req, res) {
 }
 
 io.sockets.on('connection', function (socket) {
-    sockets.emit('init', barn);
+    socket.emit('init', barn);
     socket.on('change', function (data) {
         var device = devices[data.id];
 
         if(device)
             device.set(data ? 1 : 0, function() {
                 console.log(device.value);
-                socket.emit('change', {id: data.id, state: device.value});
+                io.sockets.emit('change', {id: data.id, state: device.value});
             });
         else
             console.log("can't find device for id ", data.id);
