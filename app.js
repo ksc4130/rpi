@@ -25,6 +25,8 @@ var device = function (pin, args) {
         ready: function() {
         }
     });
+
+    return self;
 };
 
 var barn = [
