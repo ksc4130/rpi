@@ -67,6 +67,7 @@ io.sockets.on('connection', function (socket) {
     var yup = false;
     socket.emit('yup', false);
     socket.on('yup', function (data) {
+        console.log(data);
         if(data === pin)
             socket.emit('init', barn);
         else
