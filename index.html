@@ -89,6 +89,7 @@
         self.pin = ko.observable();
 
         self.yup = function () {
+            $yup.modal('hide');
             socket.emit('yup', self.pin());
         };
     };
@@ -104,6 +105,7 @@
         });
         vm.pin(undefined);
         vm.barn(mapped);
+
         $('#content').show();
     });
 
