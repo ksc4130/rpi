@@ -1,7 +1,7 @@
 var gpio = require("gpio")
     , floodLightsSwitch
     , lightsSwitch
-    , pin = 41300048;
+    , pin = '41300048';
 
 var deviceIdCnt = 0;
 var devices = {};
@@ -67,7 +67,6 @@ io.sockets.on('connection', function (socket) {
     var yup = false;
     socket.emit('yup', false);
     socket.on('yup', function (data) {
-        console.log(data);
         if(data === pin)
             socket.emit('init', barn);
         else
