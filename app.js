@@ -1,4 +1,6 @@
-var gpio = require("gpio");
+var gpio = require("gpio")
+    , floodLightsSwitch
+    , lightsSwitch;
 
 var deviceIdCnt = 0;
 var devices = {};
@@ -23,6 +25,7 @@ var device = function (pin, args) {
         direction: args.direction || 'out',
         interval: 200,
         ready: function() {
+
         }
     });
 
@@ -70,4 +73,42 @@ io.sockets.on('connection', function (socket) {
         else
             console.log("can't find device for id ", data.id);
     });
+});
+
+floodLightsSwitch = gpio.export(22, {
+    ready: function() {
+        floodLightsSwitch.on("change", function(val) {
+            if(val === 1)
+                return;
+
+            var device = devices[17];
+
+            if(device)
+                device.set((1 - device.value), function() {
+                    console.log(device.value);
+                    io.sockets.emit('change', {id: 17, state: device.value});
+                });
+            else
+                console.log("can't find device for id ", 17);
+        });
+    }
+});
+
+lightsSwitch = gpio.export(23, {
+    ready: function() {
+        lightsSwitch.on("change", function(val) {
+            if(val === 1)
+                return;
+
+            var device = devices[27];
+
+            if(device)
+                device.set((1 - device.value), function() {
+                    console.log(device.value);
+                    io.sockets.emit('change', {id: 27, state: device.value});
+                });
+            else
+                console.log("can't find device for id ", 27);
+        });
+    }
 });
