@@ -65,8 +65,8 @@ function handler (req, res) {
 
 io.sockets.on('connection', function (socket) {
     var yup = false;
-
-    socket.on('yup', function () {
+    socket.emit('yup', false);
+    socket.on('yup', function (data) {
         if(data === pin)
             socket.emit('init', barn);
         else
