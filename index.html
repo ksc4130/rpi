@@ -92,7 +92,7 @@
             socket.emit('yup', self.pin());
         };
     };
-    socket.on('yup', function (date) {
+    socket.on('yup', function (data) {
         if(!data) {
            $yup.modal('show');
         }
