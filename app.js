@@ -25,7 +25,9 @@ var device = function (pin, args) {
         direction: args.direction || 'out',
         interval: 200,
         ready: function() {
-
+            devices[pin.toString()].on("change", function(val) {
+               self.state = val;
+            });
         }
     });
 

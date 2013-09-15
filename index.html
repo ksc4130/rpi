@@ -83,6 +83,7 @@
     };
 
     socket.on('init', function (data) {
+
         var mapped = ko.utils.arrayMap(data, function (item) {
             return device(item);
         });
