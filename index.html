@@ -15,7 +15,7 @@
       <article id="content" style="display: none;" class="container">
           <div class="row">
               <!-- ko foreach: barn -->
-              <div class="col-md-12">
+              <div class="col-sm-12 col-md-6 col-lg-4">
                   <h3 class="text-center" data-bind="text: name"></h3>
                   <div class="btn-group btn-group-justified" data-bind="click: toggle">
                       <div data-bind="css: {'btn-primary': isOn, 'btn-default': isOff}" class="btn">On</div>
@@ -29,8 +29,27 @@
               <!-- /ko -->
           </div>
       </article>
+
+      <div id="yup" class="modal fade">
+          <div class="modal-dialog">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                      <h4 class="modal-title">Modal title</h4>
+                  </div>
+                  <div class="modal-body">
+                      <h4>Pin</h4>
+                      <input type="password" data-bind="value: pin">
+                  </div>
+                  <div class="modal-footer">
+                      <button data-bind="click: yup" type="button" class="btn btn-primary">Ok</button>
+                  </div>
+              </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
 </body>
 <script src="http://codeorigin.jquery.com/jquery-2.0.3.min.js"></script>
+<script src="http://getbootstrap.com/dist/js/bootstrap.js"></script>
 <script src="http://knockoutjs.com/downloads/knockout-3.0.0beta.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
@@ -61,33 +80,29 @@
             });
         };
 
-        self.turnOn = function () {
-            socket.emit('change', {
-                id: self.id,
-                state: 1
-            });
-        };
-        self.turnOff = function () {
-            socket.emit('change', {
-                id: self.id,
-                state: 0
-            });
-        };
-
         return self;
     };
-
+    var $yup = $('#yup');
     var vm = new function () {
         var self = this;
         self.barn = ko.observableArray([]);
+        self.pin = ko.observable();
+
+        self.yup = function () {
+            socket.emit('yup', self.pin());
+        };
     };
+    socket.on('yup', function (date) {
+        if(!data) {
+           $yup.modal('show');
+        }
+    });
 
     socket.on('init', function (data) {
-
         var mapped = ko.utils.arrayMap(data, function (item) {
             return device(item);
         });
-
+        vm.pin(undefined);
         vm.barn(mapped);
         $('#content').show();
     });
@@ -102,6 +117,9 @@
     });
 
     $(function () {
+        $yup.modal({
+            show: false
+        });
         ko.applyBindings(vm);
     });
 
