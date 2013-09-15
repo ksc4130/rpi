@@ -16,8 +16,8 @@
           <div class="row">
               <!-- ko foreach: barn -->
               <div class="col-md-12">
-                  <h4 data-bind="text: name"></h4>
-                  <div class="btn-group" data-bind="click: toggle">
+                  <h3 class="text-center" data-bind="text: name"></h3>
+                  <div class="btn-group btn-group-justified" data-bind="click: toggle">
                       <div data-bind="css: {'btn-primary': isOn, 'btn-default': isOff}" class="btn">On</div>
                       <div data-bind="css: {'btn-primary': isOff, 'btn-default': isOn}" class="btn">Off</div>
                   </div>
